@@ -30,7 +30,7 @@ export class HNSHA extends SegmentDefinition {
 		new Binary('valResult', 0, 1, 512),
 		new DataGroup(
 			'customSignature',
-			[new AlphaNumeric('pin', 1, 1), new AlphaNumeric('tan', 0, 1)],
+			[new AlphaNumeric('pin', 1, 1).sensitive(), new AlphaNumeric('tan', 0, 1).sensitive()],
 			0,
 			1,
 		),

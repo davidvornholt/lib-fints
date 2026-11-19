@@ -1,4 +1,5 @@
 import { type CustomerMessage, type CustomerOrderMessage, Message } from './message.js';
+import { encode, redactSegment } from './segment.js';
 
 export class HttpClient {
 	constructor(
@@ -15,7 +16,7 @@ export class HttpClient {
 			console.log('Request Message:\n');
 
 			if (this.debugRaw) {
-				console.log(encodedMessage.split("'").join('\n'));
+				console.log(redactEncodedMessage(encodedMessage, message).split("'").join('\n'));
 			} else {
 				console.log(message.toString());
 			}
@@ -51,11 +52,27 @@ export class HttpClient {
 				return responseMessage;
 			} catch (error) {
 				console.error('Error decoding response message:', error);
-				console.error('Response Message Content:\n', responseText.split("'").join('\n'));
+				// The response holds account data, so print it only when the caller asked for debug output.
+				if (this.debug) {
+					console.error('Response Message Content:\n', responseText.split("'").join('\n'));
+				}
 				throw error;
 			}
 		} else {
 			throw Error(`Request failed with status code ${response.status}: ${await response.text()}`);
 		}
 	}
+}
+
+/**
+ * The encoded message contains each segment's encoding verbatim, inside the HNVSD envelope
+ * too, so each segment with sensitive values, such as HNSHA with the PIN and TAN, is
+ * replaced by the encoding of its redacted copy.
+ */
+function redactEncodedMessage(encodedMessage: string, message: CustomerMessage): string {
+	return message.segments.reduce((text, segment) => {
+		const encoded = encode(segment);
+		const redacted = encode(redactSegment(segment));
+		return redacted === encoded ? text : text.replaceAll(encoded, () => redacted);
+	}, encodedMessage);
 }
