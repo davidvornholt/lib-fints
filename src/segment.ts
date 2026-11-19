@@ -1,4 +1,5 @@
 import { decodeElements } from './decoder.js';
+import { redactSegment } from './redaction.js';
 import { SegmentDefinition } from './segmentDefinition.js';
 import type { SegmentHeader } from './segmentHeader.js';
 import { getSegmentDefinition } from './segments/registry.js';
@@ -61,7 +62,7 @@ export function encode(data: Segment): string {
 }
 
 export function segmentToString(segment: Segment): string {
-	const keyedSegment = segment as { [key: string]: unknown };
+	const keyedSegment = redactSegment(segment) as { [key: string]: unknown };
 
 	const number = segment.header.segNr?.toString() ?? '?';
 	const segId =

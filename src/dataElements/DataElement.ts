@@ -1,4 +1,6 @@
 export abstract class DataElement {
+	isSensitive = false;
+
 	constructor(
 		public name: string,
 		public minCount = 0,
@@ -13,6 +15,16 @@ export abstract class DataElement {
 		if (minVersion && maxVersion && minVersion > maxVersion) {
 			throw new Error('invalid version range');
 		}
+	}
+
+	/**
+	 * Marks the element as holding a secret, such as the PIN or a TAN, so that debug output and
+	 * `segmentToString()` show `***` instead of its value. Use it only on elements that can
+	 * encode the text `***`, such as AlphaNumeric, Text or Binary.
+	 */
+	sensitive(): this {
+		this.isSensitive = true;
+		return this;
 	}
 
 	abstract encode(value: unknown, context: string[], version: number): string;

@@ -195,7 +195,7 @@ If you need to debug issues and the `response.bankAnswers` don't provide enough 
 config.debugEnabled = true;
 ```
 
-This will print out all sent messages and received responses to the console in a structured format.
+This will print out all sent messages and received responses to the console in a structured format. The PIN and TAN are shown as `***`, but the output still contains account data such as IBANs, balances and transactions, so don't enable it where logs are kept or shared. Without debugging, a response that can't be decoded is reported without its content.
 
 ## Supported Transactions
 
