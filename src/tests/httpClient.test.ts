@@ -128,3 +128,12 @@ describe('HttpClient logging', () => {
 		expect(printed(error)).toContain(accountText);
 	});
 });
+
+describe('package entry point', () => {
+	it('keeps the redaction helper internal', async () => {
+		const library = await import('../index.js');
+
+		expect(library).toHaveProperty('segmentToString');
+		expect(library).not.toHaveProperty('redactSegment');
+	});
+});

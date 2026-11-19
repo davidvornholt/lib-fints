@@ -1,5 +1,6 @@
 import { type CustomerMessage, type CustomerOrderMessage, Message } from './message.js';
-import { encode, redactSegment } from './segment.js';
+import { redactSegment } from './redaction.js';
+import { encode } from './segment.js';
 
 export class HttpClient {
 	constructor(
@@ -67,7 +68,8 @@ export class HttpClient {
 /**
  * The encoded message contains each segment's encoding verbatim, inside the HNVSD envelope
  * too, so each segment with sensitive values, such as HNSHA with the PIN and TAN, is
- * replaced by the encoding of its redacted copy.
+ * replaced by the encoding of its redacted copy. The length fields still give the lengths of
+ * the message that was sent.
  */
 function redactEncodedMessage(encodedMessage: string, message: CustomerMessage): string {
 	return message.segments.reduce((text, segment) => {

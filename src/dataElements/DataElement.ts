@@ -1,5 +1,4 @@
 export abstract class DataElement {
-	/** Set by `sensitive()`. */
 	isSensitive = false;
 
 	constructor(
